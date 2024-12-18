@@ -46,11 +46,11 @@ jobs:
       with:
         host: ${{ secrets.VM_HOST }}        # HOST publicado por NGROK 
         username: ${{ secrets.VM_USER }}    # Usuario SSH
-        key: ${{ secrets.VM_SSH_KEY }}      # Clave privada SSH
+        password: ${{ secrets.VM_PASS }}   
         port: ${{ secrets.PORT }}           # PUERTO publicado por NGROK
         script: |
           echo "Desplegando la aplicación en la VM..."
-          cd /Users/pablonssss/appflask_des15/  # Ruta en tu VM
+          cd /Users/pablonssss/appflask_des15/ 
           git pull origin main
           docker-compose down
           docker-compose pull
@@ -61,7 +61,7 @@ jobs:
       with:
         host: ${{ secrets.VM_HOST }}
         username: ${{ secrets.VM_USER }}
-        key: ${{ secrets.VM_SSH_KEY }}
+        password: ${{ secrets.VM_PASS }}
         port: ${{ secrets.PORT }}
         script: |
           echo "Iniciando Ngrok para exponer la aplicación..."
