@@ -56,14 +56,14 @@ jobs:
           docker-compose pull
           docker-compose up -d
 
-- name: Expose Flask App with Ngrok
-  uses: appleboy/ssh-action@master
-  with:
-    host: ${{ secrets.VM_HOST }}
-    username: ${{ secrets.VM_USER }}
-    key: ${{ secrets.VM_SSH_KEY }}
-    port: ${{ secrets.PORT }}
-    script: |
-      echo "Iniciando Ngrok para exponer la aplicación..."
-      ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-      nohup ngrok http 80 &
+    - name: Expose Flask App with Ngrok
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USER }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          echo "Iniciando Ngrok para exponer la aplicación..."
+          ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+          nohup ngrok http 80 &
