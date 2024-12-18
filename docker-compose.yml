@@ -1,0 +1,76 @@
+version: "3.8"  # Definimos la versión de Docker Compose que estamos usando
+
+services:  # Definimos nuestros servicios o "contenedores" que vamos a crear
+
+  # Configuración del contenedor principal (maestro)
+  mysql_master:
+    image: mysql:8.0  # Imagen oficial de MySQL versión 8.0
+    container_name: mysql_master  # Nombre del contenedor
+    
+    environment:  # Variables de entorno para la configuración interna de MySQL
+      MYSQL_ROOT_PASSWORD: rootpassword  
+      MYSQL_DATABASE: flaskapp             
+      MYSQL_USER: appuser                 
+      MYSQL_PASSWORD: apppassword         
+    
+    ports:  # Asignamos el puerto 3306 del contenedor al 3306 del host (para conectarnos desde afuera)
+      - "3306:3306"
+    
+    volumes:  # Guardamos los datos de la base de datos en el disco para no perderlos si el contenedor se detiene
+      - mysql_master_data:/var/lib/mysql
+      - ./docker/master-init.sql:/docker-entrypoint-initdb.d/master-init.sql  # Agregamos el archivo SQL que inicializa el 'master'
+      - ./docker/my-master.cnf:/etc/mysql/my.cnf # Archivo de configuración montado
+
+ 
+    networks:  # Lo conectamos a una red interna llamada "backend" para que se comunique con otros contenedores
+      - backend
+
+  # Configuración del contenedor esclavo
+  mysql_slave:
+    image: mysql:8.0  
+    container_name: mysql_slave  # Nombre del contenedor 'esclavo'
+    
+    environment:  # Configuramos variables específicas para el esclavo
+      MYSQL_ROOT_PASSWORD: rootpassword   
+      MYSQL_REPLICATION_ROLE: slave       # Indicamos que este contenedor es un esclavo
+    
+    depends_on:  # Aseguramos que el maestro se inicie antes de este contenedor
+      - mysql_master
+
+    volumes:
+      - ./docker/slave-init.sql:/docker-entrypoint-initdb.d/slave-init.sql 
+      - ./docker/my-slave.cnf:/etc/mysql/my.cnf # Archivo de configuración del esclavo
+
+    networks:  # Lo conectamos a la misma red interna para que pueda "ver" al maestro
+      - backend
+
+# Contenedor para la aplicación Flask
+  flask_app:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    container_name: flask_app
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
+
+# Contenedor para Nginx
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf  # Configuración personalizada
+    ports:
+      - "80:80"  # Nginx maneja las solicitudes externas en este puerto
+    networks:
+      - backend
+
+
+# Definimos los volúmenes para almacenar datos de la base de datos
+volumes:
+  mysql_master_data:  # Aquí se almacenarán los datos del maestro para persistencia
+
+# Definimos la red interna para la comunicación entre los contenedores
+networks:
+  backend:  # Red personalizada llamada "backend"

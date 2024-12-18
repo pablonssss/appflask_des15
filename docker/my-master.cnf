@@ -1,0 +1,4 @@
+[mysqld]
+server-id=1                  # ID 1 maestro
+log_bin=mysql-bin            # Activa el log binario para la replicación
+binlog_do_db=db_flask        # Solo replicamos la base de datos flaskapp

@@ -1,0 +1,6 @@
+[mysqld]
+server-id=2                  # ID 2 para el esclavo
+log_bin=mysql-bin            # El esclavo también necesita el log binario para posibles réplicas en cadena
+relay_log=relay-bin          # Archivo de log de retransmisión
+read_only=1                  # El esclavo no puede escribir datos directamente
+
