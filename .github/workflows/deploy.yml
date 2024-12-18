@@ -50,11 +50,13 @@ jobs:
         port: ${{ secrets.PORT }}           # PUERTO publicado por NGROK
         script: |
           echo "Desplegando la aplicación en la VM..."
-          cd /Users/pablonssss/appflask_des15/ 
-          git pull origin main
-          docker-compose down
-          docker-compose pull
-          docker-compose up -d
+          bash -c "
+            cd /Users/pablonssss/appflask_des15/ 
+            git pull origin main
+            /usr/local/bin/docker-compose down
+            /usr/local/bin/docker-compose pull
+            /usr/local/bin/docker-compose up -d
+          "
 
     - name: Expose Flask App with Ngrok
       uses: appleboy/ssh-action@master
