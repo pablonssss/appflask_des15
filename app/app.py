@@ -47,13 +47,14 @@ def manage_users():
         return jsonify({"message": f"Usuario '{name}' agregado con éxito"}), 201
     
     # Si es una solicitud GET, devolvemos todos los usuarios
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users")
-    users = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return jsonify(users)
+    elif request.method == 'GET':
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users")
+        users = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(users)
 
 # Ejecutamos la app cuando se corre directamente este archivo
 if __name__ == '__main__':
