@@ -1,0 +1,12 @@
+version: "3"
+agent:
+    authtoken: 2lAapuwxoBiwXmZMiWcUUPSxRrS_6ziYcktAUU18WhcLjuSb7
+
+tunnels:
+  ssh:
+    addr: 22
+    proto: tcp    # Exposición SSH
+  flask:
+    addr: 80
+    proto: http   # Exposición de la aplicación Flask
+
