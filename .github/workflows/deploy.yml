@@ -1,0 +1,50 @@
+name: Deploy to VM
+
+# Se ejecuta en cada push a main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Agente de GitHub Actions
+
+    # Definimos los pasos
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Recupera todo el historial de la rama
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./docker/Dockerfile.flask
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/flask_app:latest
+
+    - name: Deploy to VM via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USER }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        port: 22
+        script: |
+          # Accedemos a la VM y hacemos pull de la imagen actualizada
+          cd /path/to/your/project
+          git pull origin main
+          docker-compose down
+          docker-compose pull
+          docker-compose up -d
+
