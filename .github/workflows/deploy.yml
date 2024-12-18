@@ -29,7 +29,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: ./docker/Dockerfile.flask
+        file: ./docker/Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/flask_app:latest
 
@@ -42,7 +42,7 @@ jobs:
         port: 22
         script: |
           # Accedemos a la VM y hacemos pull de la imagen actualizada
-          cd /path/to/your/project
+          cd /Users/pablonssss/appflask_des15/
           git pull origin main
           docker-compose down
           docker-compose pull
