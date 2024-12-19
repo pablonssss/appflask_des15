@@ -198,11 +198,4 @@ Se vuelve a corregir, pero no logro solucionar la inserción de datos en la base
 Finalmente reviso el Master y veo que está bien configurado:
  
 
-
-
-
-
-
-
-
-
+----> SE SUBE Instructivo_Desafio_15.docx con capruta de pantalla de todo el proceso <----
